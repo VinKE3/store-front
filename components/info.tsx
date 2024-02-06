@@ -6,6 +6,7 @@ import Currency from "@/components/ui/currency";
 import Button from "@/components/ui/button";
 import { Product } from "@/types";
 import useCart from "@/hooks/use-cart";
+import Link from "next/link";
 
 interface InfoProps {
   data: Product;
@@ -41,8 +42,8 @@ const Info: React.FC<InfoProps> = ({ data }) => {
         </div>
       </div>
       <div className="mt-10 flex items-center gap-x-3">
-        <Button onClick={onAddToCart} className="flex items-center gap-x-2">
-          Contactar al vendedor
+        <Button className="flex items-center gap-x-2">
+          <Link href="https://wa.link/nzy561">Contactar al Vendedor</Link>
           <MessageCircle size={20} />
         </Button>
       </div>
