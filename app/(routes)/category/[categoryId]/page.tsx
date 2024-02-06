@@ -1,34 +1,33 @@
-
-import Container from '@/components/ui/container';
-import Billboard from '@/components/ui/billboard';
-import ProductCard from '@/components/ui/product-card';
-import NoResults from '@/components/ui/no-results';
+import Container from "@/components/ui/container";
+import Billboard from "@/components/ui/billboard";
+import ProductCard from "@/components/ui/product-card";
+import NoResults from "@/components/ui/no-results";
 
 import getProducts from "@/actions/get-products";
-import getCategory from '@/actions/get-category';
-import getSizes from '@/actions/get-sizes';
-import getColors from '@/actions/get-colors';
+import getCategory from "@/actions/get-category";
+import getSizes from "@/actions/get-sizes";
+import getColors from "@/actions/get-colors";
 
-import Filter from './components/filter';
-import MobileFilters from './components/mobile-filters';
+import Filter from "./components/filter";
+import MobileFilters from "./components/mobile-filters";
 
 export const revalidate = 0;
 
 interface CategoryPageProps {
   params: {
     categoryId: string;
-  },
+  };
   searchParams: {
     colorId: string;
     sizeId: string;
-  }
+  };
 }
 
-const CategoryPage: React.FC<CategoryPageProps> = async ({ 
-  params, 
-  searchParams
+const CategoryPage: React.FC<CategoryPageProps> = async ({
+  params,
+  searchParams,
 }) => {
-  const products = await getProducts({ 
+  const products = await getProducts({
     categoryId: params.categoryId,
     colorId: searchParams.colorId,
     sizeId: searchParams.sizeId,
@@ -36,26 +35,39 @@ const CategoryPage: React.FC<CategoryPageProps> = async ({
   const sizes = await getSizes();
   const colors = await getColors();
   const category = await getCategory(params.categoryId);
+  const uniqueProductSizes = products
+    .flatMap((product) => product.size)
+    .reduce((unique: any, size) => {
+      return unique.find((item: any) => item.id === size.id)
+        ? unique
+        : [...unique, size];
+    }, []);
+
+  const uniqueProductColors = products
+    .flatMap((product) => product.color)
+    .reduce((unique: any, color) => {
+      return unique.find((item: any) => item.id === color.id)
+        ? unique
+        : [...unique, color];
+    }, []);
 
   return (
     <div className="bg-white">
       <Container>
-        <Billboard 
-          data={category.billboard}
-        />
+        <Billboard data={category.billboard} />
         <div className="px-4 sm:px-6 lg:px-8 pb-24">
           <div className="lg:grid lg:grid-cols-5 lg:gap-x-8">
             <MobileFilters sizes={sizes} colors={colors} />
             <div className="hidden lg:block">
               <Filter
-                valueKey="sizeId" 
-                name="Sizes" 
-                data={sizes}
+                valueKey="sizeId"
+                name="Tamaños"
+                data={uniqueProductSizes}
               />
-              <Filter 
-                valueKey="colorId" 
-                name="Colors" 
-                data={colors}
+              <Filter
+                valueKey="colorId"
+                name="Colores"
+                data={uniqueProductColors}
               />
             </div>
             <div className="mt-6 lg:col-span-4 lg:mt-0">
